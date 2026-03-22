@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>EduVault — Learn Smarter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0F1E; --surface: #111827; --border: #1F2937;
+      --accent: #6366F1; --accent2: #10B981; --text: #F9FAFB; --muted: #6B7280;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(10,15,30,0.9); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { font-size: 14px; color: var(--muted); transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-btn { padding: 9px 20px; background: var(--accent); border-radius: 8px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; transition: opacity .2s; border: none; font-family: 'Outfit', sans-serif; }
+    .nav-btn:hover { opacity: 0.85; }
+
+    /* ── PAGES ── */
+    .page { display: none; min-height: 100vh; padding-top: 72px; }
+    .page.active { display: block; }
+
+    /* ── LANDING ── */
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 60px 24px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.15) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-block; padding: 6px 16px;
+      background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 100px; font-size: 12px; color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(36px,6vw,72px); font-weight: 800; line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px; }
+    .hero h1 span { color: var(--accent); }
+    .hero p { font-size: 18px; color: var(--muted); max-width: 500px; margin: 0 auto 36px; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { padding: 14px 32px; background: var(--accent); color: #fff; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; border: none; font-family: 'Outfit', sans-serif; transition: opacity .2s; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-outline { padding: 14px 32px; border: 1px solid var(--border); color: var(--text); border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; background: none; font-family: 'Outfit', sans-serif; transition: border-color .2s; }
+    .btn-outline:hover { border-color: var(--accent); }
+
+    /* Stats */
+    .stats { display: flex; justify-content: center; gap: 60px; padding: 48px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); flex-wrap: wrap; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* Features */
+    .features { padding: 80px 48px; max-width: 1100px; margin: 0 auto; }
+    .features h2 { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; text-align: center; margin-bottom: 48px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: border-color .2s; }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-icon { font-size: 28px; margin-bottom: 14px; }
+    .feature-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* CTA section */
+    .cta { text-align: center; padding: 80px 24px; background: var(--surface); border-top: 1px solid var(--border); }
+    .cta h2 { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+    .cta p { color: var(--muted); margin-bottom: 28px; }
+
+    /* ── COURSES PAGE ── */
+    .page-header { padding: 40px 48px 20px; border-bottom: 1px solid var(--border); }
+    .page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+    .page-header p { color: var(--muted); margin-top: 6px; }
+
+    .courses-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; padding: 32px 48px; max-width: 1200px; }
+    .course-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color .2s; cursor: pointer; }
+    .course-card:hover { border-color: var(--accent); }
+    .course-thumb { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+    .course-body { padding: 20px; }
+    .course-tag { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .course-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .course-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+    .course-meta { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
+
+    /* ── DASHBOARD PAGE ── */
+    .dashboard-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 72px); }
+    .dash-sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 16px; }
+    .dash-sidebar-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; font-size: 14px; color: var(--muted); cursor: pointer; margin-bottom: 4px; transition: background .2s, color .2s; border: none; background: none; font-family: 'Outfit', sans-serif; width: 100%; text-align: left; }
+    .dash-sidebar-item:hover, .dash-sidebar-item.active { background: rgba(99,102,241,0.1); color: var(--text); }
+    .dash-main { padding: 32px 40px; }
+    .welcome-card { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(16,185,129,0.1)); border: 1px solid rgba(99,102,241,0.3); border-radius: 16px; padding: 28px; margin-bottom: 28px; }
+    .welcome-card h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .welcome-card p { color: var(--muted); font-size: 14px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .stat-box-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+    .stat-box-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .progress-list { display: flex; flex-direction: column; gap: 12px; }
+    .progress-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .progress-item-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+    .progress-bar-wrap { background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+    /* Veriface gate overlay */
+    .vf-gate {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .vf-gate.hidden { display: none; }
+    .vf-card {
+      background: #111827; border: 1px solid var(--border);
+      border-radius: 20px; padding: 40px; width: 100%; max-width: 420px;
+      text-align: center;
+    }
+    .vf-logo { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 24px; display: block; color: #fff; }
+    .vf-logo span { color: #00D4FF; }
+    .vf-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .vf-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .vf-cam { position: relative; aspect-ratio: 4/3; background: #060A0D; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+    .vf-cam video { width: 100%; height: 100%; object-fit: cover; }
+    .vf-oval { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .vf-oval-ring { width: 150px; height: 190px; border-radius: 50%; border: 2px solid rgba(0,212,255,0.5); animation: ovalPulse 2s ease infinite; }
+    .vf-scan-line { position: absolute; left: 15%; right: 15%; height: 2px; background: linear-gradient(90deg, transparent, #00D4FF, transparent); animation: scanMove 2s ease-in-out infinite; display: none; }
+    .vf-scan-line.active { display: block; }
+    .vf-status { font-size: 11px; color: #00D4FF; font-family: monospace; margin-bottom: 16px; letter-spacing: 1px; }
+    .vf-btn { width: 100%; padding: 13px; background: #00D4FF; border: none; border-radius: 9px; font-size: 15px; font-weight: 700; color: #000; cursor: pointer; font-family: 'Outfit', sans-serif; transition: opacity .2s; }
+    .vf-btn:hover { opacity: 0.85; }
+    .vf-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .vf-btn.success { background: #00FF9E; }
+    .vf-badge { font-size: 11px; color: var(--muted); margin-top: 16px; }
+    .vf-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 12px; }
+    .vf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background .3s; }
+    .vf-dot.active { background: #00D4FF; animation: dotPulse 1s infinite; }
+    .vf-dot.done { background: #00FF9E; }
+    .canvas-hidden { display: none; }
+    .vf-err { background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.3); color: #FF4D6D; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; display: none; }
+
+    /* Footer */
+    footer { text-align: center; padding: 32px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+    footer span { color: var(--text); }
+
+    @keyframes ovalPulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,0)} 50%{box-shadow:0 0 0 8px rgba(0,212,255,0.08)} }
+    @keyframes scanMove { 0%,100%{top:15%;opacity:1} 50%{top:80%;opacity:0.5} }
+    @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .features-grid, .courses-grid { grid-template-columns: 1fr; }
+      .stats { gap: 28px; padding: 32px 24px; }
+      .features, .courses-grid { padding: 40px 20px; }
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .dash-sidebar { display: none; }
+      .dash-main { padding: 20px; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+      .page-header { padding: 24px 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav>
+    <div class="nav-logo">Edu<span>Vault</span></div>
+    <div class="nav-links">
+      <a href="#" onclick="showPage('landing')">Home</a>
+      <a href="#" onclick="showProtected('courses')">Courses</a>
+      <a href="#" onclick="showProtected('dashboard')">Dashboard</a>
+    </div>
+    <button class="nav-btn" onclick="showProtected('dashboard')">Student Login</button>
+  </nav>
+
+  <!-- ── VERIFACE GATE ── -->
+  <div class="vf-gate hidden" id="vf-gate">
+    <div class="vf-card">
+      <a href="https://getveriface.com" target="_blank" class="vf-logo">Veri<span>face</span></a>
+      <div class="vf-title">Student Verification</div>
+      <div class="vf-sub">Verify your face to access EduVault content.</div>
+      <div class="vf-dots">
+        <div class="vf-dot active" id="vf-dot-0"></div>
+        <div class="vf-dot" id="vf-dot-1"></div>
+        <div class="vf-dot" id="vf-dot-2"></div>
+        <div class="vf-dot" id="vf-dot-3"></div>
+      </div>
+      <div class="vf-status" id="vf-status">Click below to verify</div>
+      <div class="vf-err" id="vf-err"></div>
+      <div class="vf-cam">
+        <video id="vf-video" autoplay muted playsinline></video>
+        <div class="vf-oval"><div class="vf-oval-ring"></div></div>
+        <div class="vf-scan-line" id="vf-scan"></div>
+      </div>
+      <canvas class="canvas-hidden" id="vf-canvas" width="224" height="224"></canvas>
+      <button class="vf-btn" id="vf-btn" onclick="startVerification()">Verify My Face →</button>
+      <div class="vf-badge">🔒 Secured by <a href="https://getveriface.com" target="_blank" style="color:#00D4FF;">Veriface</a></div>
+    </div>
+  </div>
+
+  <!-- ── LANDING PAGE ── -->
+  <div class="page active" id="page-landing">
+    <div class="hero">
+      <div>
+        <div class="hero-badge">🎓 India's Smartest Learning Platform</div>
+        <h1>Learn Without<br><span>Limits.</span></h1>
+        <p>Access premium courses, track your progress and get certified — all in one place. Protected by face authentication.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="showProtected('courses')">Browse Courses →</button>
+          <button class="btn-outline" onclick="showProtected('dashboard')">Student Portal</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div style="text-align:center"><div class="stat-val">12,000+</div><div class="stat-label">Students Enrolled</div></div>
+      <div style="text-align:center"><div class="stat-val">200+</div><div class="stat-label">Premium Courses</div></div>
+      <div style="text-align:center"><div class="stat-val">98%</div><div class="stat-label">Satisfaction Rate</div></div>
+      <div style="text-align:center"><div class="stat-val">50+</div><div class="stat-label">Expert Instructors</div></div>
+    </div>
+
+    <div class="features">
+      <h2>Why EduVault?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <div class="feature-title">Face-Secured Access</div>
+          <div class="feature-desc">Only enrolled students can access content. Powered by Veriface biometric authentication.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📹</div>
+          <div class="feature-title">HD Video Lectures</div>
+          <div class="feature-desc">Learn from India's top educators with crystal clear video content and downloadable notes.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <div class="feature-title">Verified Certificates</div>
+          <div class="feature-desc">Get industry-recognized certificates upon course completion to boost your career.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Progress Tracking</div>
+          <div class="feature-desc">Monitor your learning journey with detailed analytics and personalized recommendations.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <div class="feature-title">Live Doubt Sessions</div>
+          <div class="feature-desc">Join live Q&A sessions with instructors every week and get your doubts cleared instantly.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <div class="feature-title">Learn Anywhere</div>
+          <div class="feature-desc">Access your courses on any device — mobile, tablet or desktop — anytime, anywhere.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h2>Ready to start learning?</h2>
+      <p>Join 12,000+ students already on EduVault</p>
+      <button class="btn-primary" onclick="showProtected('courses')">Get Started Free →</button>
+    </div>
+
+    <footer>
+      © 2026 EduVault · Protected by <span>Veriface</span> Face Authentication ·
+      <a href="https://getveriface.com" target="_blank" style="color:#6366F1;">getveriface.com</a>
+    </footer>
+  </div>
+
+  <!-- ── COURSES PAGE (PROTECTED) ── -->
+  <div class="page" id="page-courses">
+    <div class="page-header">
+      <h1>📚 Course Library</h1>
+      <p>All courses are exclusively available to verified students.</p>
+    </div>
+    <div class="courses-grid">
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#1E1B4B,#312E81)">🐍</div>
+        <div class="course-body">
+          <div class="course-tag">Programming</div>
+          <div class="course-title">Python for Data Science</div>
+          <div class="course-desc">Master Python from basics to advanced data analysis and machine learning.</div>
+          <div class="course-meta"><span>⏱ 42 hours</span><span>⭐ 4.9</span><span>👥 3.2k students</span></div>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#064E3B,#065F46)">🌐</div>
+        <div class="course-body">
+          <div class="course-tag">Web Development</div>
+          <div class="course-title">Full Stack Web Dev</div>
+          <div class="course-desc">Build modern web applications with React, Node.js and MongoDB.</div>
+          <div class="course-meta"><span>⏱ 68 hours</span><span>⭐ 4.8</span><span>👥 5.1k students</span></div>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#7C2D12,#9A3412)">🤖</div>
+        <div class="course-body">
+          <div class="course-tag">Artificial Intelligence</div>
+          <div class="course-title">Machine Learning A-Z</div>
+          <div class="course-desc">From linear regression to deep neural networks — complete ML course.</div>
+          <div class="course-meta"><span>⏱ 55 hours</span><span>⭐ 4.9</span><span>👥 2.8k students</span></div>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#1E3A5F,#1D4ED8)">☁️</div>
+        <div class="course-body">
+          <div class="course-tag">Cloud Computing</div>
+          <div class="course-title">AWS Cloud Practitioner</div>
+          <div class="course-desc">Get AWS certified with hands-on labs and real world projects.</div>
+          <div class="course-meta"><span>⏱ 30 hours</span><span>⭐ 4.7</span><span>👥 1.9k students</span></div>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#4A1D96,#6D28D9)">📱</div>
+        <div class="course-body">
+          <div class="course-tag">Mobile Dev</div>
+          <div class="course-title">React Native Mobile Apps</div>
+          <div class="course-desc">Build cross-platform iOS and Android apps with React Native.</div>
+          <div class="course-meta"><span>⏱ 38 hours</span><span>⭐ 4.8</span><span>👥 2.2k students</span></div>
+        </div>
+      </div>
+      <div class="course-card">
+        <div class="course-thumb" style="background:linear-gradient(135deg,#134E4A,#0F766E)">🔒</div>
+        <div class="course-body">
+          <div class="course-tag">Cybersecurity</div>
+          <div class="course-title">Ethical Hacking Bootcamp</div>
+          <div class="course-desc">Learn penetration testing, vulnerability assessment and security tools.</div>
+          <div class="course-meta"><span>⏱ 48 hours</span><span>⭐ 4.9</span><span>👥 1.6k students</span></div>
+        </div>
+      </div>
+    </div>
+    <footer>© 2026 EduVault · Protected by <span>Veriface</span></footer>
+  </div>
+
+  <!-- ── DASHBOARD PAGE (PROTECTED) ── -->
+  <div class="page" id="page-dashboard">
+    <div class="dashboard-layout">
+      <div class="dash-sidebar">
+        <div style="font-size:11px;letter-spacing:2px;color:var(--muted);margin-bottom:12px;padding:0 14px;">MENU</div>
+        <button class="dash-sidebar-item active">📊 Dashboard</button>
+        <button class="dash-sidebar-item">📚 My Courses</button>
+        <button class="dash-sidebar-item">🏆 Certificates</button>
+        <button class="dash-sidebar-item">📅 Schedule</button>
+        <button class="dash-sidebar-item">💬 Community</button>
+        <button class="dash-sidebar-item">⚙️ Settings</button>
+      </div>
+      <div class="dash-main">
+        <div class="welcome-card">
+          <h2>Welcome back, Student! 👋</h2>
+          <p>You have 2 assignments due this week. Keep up the great work!</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-box-val">4</div><div class="stat-box-label">Courses Enrolled</div></div>
+          <div class="stat-box"><div class="stat-box-val">68%</div><div class="stat-box-label">Avg Progress</div></div>
+          <div class="stat-box"><div class="stat-box-val">2</div><div class="stat-box-label">Certificates</div></div>
+          <div class="stat-box"><div class="stat-box-val">142h</div><div class="stat-box-label">Hours Learned</div></div>
+        </div>
+        <div class="section-title">Continue Learning</div>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="progress-item-title">🐍 Python for Data Science</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:78%"></div></div>
+              <span style="font-size:13px;color:var(--muted)">78%</span>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-item-title">🌐 Full Stack Web Dev</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:45%"></div></div>
+              <span style="font-size:13px;color:var(--muted)">45%</span>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-item-title">🤖 Machine Learning A-Z</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="progress-bar-wrap" style="flex:1"><div class="progress-bar-fill" style="width:23%"></div></div>
+              <span style="font-size:13px;color:var(--muted)">23%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- face-api -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+  <script>
+    // ── YOUR VERIFACE API KEY ──
+    const VERIFACE_API_KEY = 'YOUR_API_KEY_HERE';
+
+    let targetPage = null;
+    let vfStream   = null;
+    let modelsLoaded = false;
+
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(`page-${name}`).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function showProtected(name) {
+      targetPage = name;
+      document.getElementById('vf-gate').classList.remove('hidden');
+      document.getElementById('vf-btn').textContent = 'Verify My Face →';
+      document.getElementById('vf-btn').disabled = false;
+      document.getElementById('vf-btn').className = 'vf-btn';
+      document.getElementById('vf-err').style.display = 'none';
+      document.getElementById('vf-status').textContent = 'Click below to verify';
+      resetDots();
+    }
+
+    function resetDots() {
+      for (let i = 0; i < 4; i++) {
+        document.getElementById(`vf-dot-${i}`).className = 'vf-dot' + (i === 0 ? ' active' : '');
+      }
+    }
+
+    function markDot(i, state) {
+      document.getElementById(`vf-dot-${i}`).className = 'vf-dot ' + state;
+    }
+
+    function setStatus(text) {
+      document.getElementById('vf-status').textContent = text;
+    }
+
+    function showErr(msg) {
+      const el = document.getElementById('vf-err');
+      el.textContent = msg; el.style.display = 'block';
+    }
+
+    async function startVerification() {
+      const btn = document.getElementById('vf-btn');
+      btn.disabled = true; btn.textContent = 'Starting…';
+      document.getElementById('vf-err').style.display = 'none';
+
+      // 1. Camera
+      setStatus('Requesting camera…');
+      try {
+        vfStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+        document.getElementById('vf-video').srcObject = vfStream;
+        await document.getElementById('vf-video').play();
+        markDot(0, 'done'); markDot(1, 'active');
+      } catch {
+        showErr('Camera access denied. Please allow camera.');
+        btn.disabled = false; btn.textContent = 'Try Again';
+        return;
+      }
+
+      // 2. Load models
+      setStatus('Loading AI models… (first time ~10s)');
+      if (!modelsLoaded) {
+        try {
+          const MODEL_URL = 'https://vladmandic.github.io/face-api/model';
+          await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+          await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+          await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+          modelsLoaded = true;
+        } catch {
+          showErr('Failed to load AI. Check connection.');
+          btn.disabled = false; btn.textContent = 'Try Again';
+          stopCam(); return;
+        }
+      }
+      markDot(1, 'done'); markDot(2, 'active');
+
+      // 3. Detect face
+      setStatus('Position your face in the oval…');
+      document.getElementById('vf-scan').className = 'vf-scan-line active';
+      const video  = document.getElementById('vf-video');
+      const canvas = document.getElementById('vf-canvas');
+      const ctx    = canvas.getContext('2d');
+
+      let faceFound = false;
+      for (let i = 0; i < 20; i++) {
+        ctx.drawImage(video, 0, 0, 224, 224);
+        const det = await faceapi.detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }));
+        if (det) { faceFound = true; break; }
+        await sleep(300);
+      }
+
+      if (!faceFound) {
+        showErr('No face detected. Try better lighting.');
+        document.getElementById('vf-scan').className = 'vf-scan-line';
+        btn.disabled = false; btn.textContent = 'Try Again';
+        stopCam(); return;
+      }
+
+      markDot(2, 'done'); markDot(3, 'active');
+      setStatus('Analyzing identity…');
+
+      // 4. Get embedding
+      try {
+        const embeddings = [];
+        for (let i = 0; i < 5; i++) {
+          ctx.drawImage(video, 0, 0, 224, 224);
+          const det = await faceapi
+            .detectSingleFace(canvas, new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 }))
+            .withFaceLandmarks().withFaceDescriptor();
+          if (det) embeddings.push(Array.from(det.descriptor));
+          await sleep(150);
+        }
+
+        if (!embeddings.length) throw new Error('No embedding');
+
+        const avg = embeddings[0].map((_, i) => embeddings.reduce((s, e) => s + e[i], 0) / embeddings.length);
+
+        // 5. Call Veriface API
+        const res  = await fetch('https://getveriface.com/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: VERIFACE_API_KEY, embedding: avg })
+        });
+        const data = await res.json();
+
+        stopCam();
+        document.getElementById('vf-scan').className = 'vf-scan-line';
+
+        if (data.success) {
+          markDot(3, 'done');
+          setStatus(`✓ Welcome, ${data.name}!`);
+          btn.className = 'vf-btn success';
+          btn.textContent = 'Access Granted ✓';
+          setTimeout(() => {
+            document.getElementById('vf-gate').classList.add('hidden');
+            showPage(targetPage);
+          }, 1500);
+        } else {
+          showErr('Face not recognized. Are you enrolled?');
+          btn.disabled = false; btn.textContent = 'Try Again';
+          resetDots();
+        }
+
+      } catch (e) {
+        showErr('Verification error: ' + e.message);
+        btn.disabled = false; btn.textContent = 'Try Again';
+        stopCam();
+      }
+    }
+
+    function stopCam() {
+      vfStream?.getTracks().forEach(t => t.stop());
+      vfStream = null;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+  </script>
+</body>
+</html>
